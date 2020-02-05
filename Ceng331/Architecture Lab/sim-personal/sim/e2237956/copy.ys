@@ -1,0 +1,47 @@
+# Gökhan Yılmaz 2237956
+
+init:
+	irmovq Stack, %rsp
+	call main
+	halt
+	
+.align 8
+
+src:
+	.quad 0x00a
+	.quad 0x0b0
+	.quad 0xc00
+
+dest:
+	.quad 0x111
+	.quad 0x222
+	.quad 0x333
+	
+main:
+	irmovq	src, %rdi
+	irmovq	dest, %rsi
+	irmovq	$3, %rdx
+	call	copy_block	
+	ret
+	
+copy_block:
+	irmovq	$0, %rax
+	jmp	L2
+L3:
+	pushq %rbx
+	mrmovq	(%rdi), %rcx
+	rmmovq	%rcx, (%rsi)
+	xorq	%rcx, %rax
+	irmovq	$1, %rbx
+	subq	%rbx, %rdx
+	irmovq	$8, %rbx
+	addq	%rbx, %rsi
+	addq	%rbx, %rdi
+	popq	%rbx
+L2:
+	andq	%rdx, %rdx
+	jg	L3
+	ret
+	
+	.pos 0x200
+Stack:

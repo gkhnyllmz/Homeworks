@@ -1,0 +1,39 @@
+# Gökhan Yılmaz 2237956
+
+init:
+	irmovq Stack, %rsp
+	call Main
+	halt
+	
+.align 8
+ele1:
+	.quad 0x00a
+	.quad ele2
+ele2:
+	.quad 0x0b0
+	.quad ele3
+ele3:
+	.quad 0xc00
+	.quad 0
+
+Main:
+	irmovq 	ele1, %rdi
+	call 	rsum_list
+	ret
+
+rsum_list:
+	andq	%rdi, %rdi
+	jne	L8
+	irmovq	$0, %rax
+	ret
+L8:
+	pushq	%rbx
+	mrmovq	(%rdi), %rbx
+	mrmovq	8(%rdi), %rdi
+	call	rsum_list
+	addq	%rbx, %rax
+	popq	%rbx
+	ret
+	
+	.pos 0x200
+Stack:
